@@ -75,6 +75,67 @@
       </div>
     </div>
 
+    <h2 class="heading" style="margin-top:64px;">ETERNAL FAVORS</h2>
+    <p class="heading-sub">Permanent 1.5× blessings, each from every source.</p>
+
+    <div class="grid">
+      <div class="pact">
+        <div class="tier">Eternal Favor</div>
+        <h3>1.5× Damage</h3>
+        <ul><li>Boosts damage from all sources by 50%</li></ul>
+        <div class="price">€4.99</div>
+        <a class="btn disabled" data-pact="dmg" aria-disabled="true">COMING SOON</a>
+      </div>
+      <div class="pact">
+        <div class="tier">Eternal Favor</div>
+        <h3>1.5× Souls</h3>
+        <ul><li>Boosts souls from all sources by 50%</li></ul>
+        <div class="price">€4.99</div>
+        <a class="btn disabled" data-pact="soul" aria-disabled="true">COMING SOON</a>
+      </div>
+      <div class="pact">
+        <div class="tier">Eternal Favor</div>
+        <h3>1.5× Ichor</h3>
+        <ul><li>Boosts ichor from all sources by 50%</li></ul>
+        <div class="price">€9.99</div>
+        <a class="btn disabled" data-pact="ichor" aria-disabled="true">COMING SOON</a>
+      </div>
+      <div class="pact">
+        <div class="tier">Eternal Favor</div>
+        <h3>1.5× Reliquaries</h3>
+        <ul><li>Boosts reliquaries from all sources by 50%</li></ul>
+        <div class="price">€9.99</div>
+        <a class="btn disabled" data-pact="relic" aria-disabled="true">COMING SOON</a>
+      </div>
+      <div class="pact" style="border-color:rgba(210,103,74,.5);">
+        <div class="tier">Favor Bundle</div>
+        <h3>All Four Favors</h3>
+        <ul>
+          <li>1.5× Damage, Souls, Ichor and Reliquaries</li>
+          <li>25% off the combined price</li>
+        </ul>
+        <div class="price">€22.47</div>
+        <a class="btn disabled" data-pact="bundle" aria-disabled="true">COMING SOON</a>
+      </div>
+    </div>
+
+    <h2 class="heading" style="margin-top:64px;">SUPPORT US</h2>
+    <p class="heading-sub">A one-time offering to the temple — repeatable, and it grows with your legend.</p>
+
+    <div class="grid" style="max-width:420px; margin:0 auto;">
+      <div class="pact">
+        <div class="tier">Offering</div>
+        <h3>Supporter's Tribute</h3>
+        <ul>
+          <li>50 Ichor + 2% of your lifetime Ichor</li>
+          <li>5 Reliquaries + 2% of your lifetime Reliquaries</li>
+          <li>Granted in-game on your next launch</li>
+        </ul>
+        <div class="price">€2.99</div>
+        <a class="btn disabled" data-pact="tribute" aria-disabled="true">COMING SOON</a>
+      </div>
+    </div>
+
     <p style="max-width:640px; margin:36px auto 0; text-align:center; color:var(--faint); font-size:13.5px;">
       Purchases made here are granted to your cloud defender profile and appear in the game
       on every linked device. Questions or issues with a purchase?
@@ -85,11 +146,16 @@
 </main>
 
 <script>
-// Lemon Squeezy checkout links — paste the "Buy now" URL for each Divine Pact product here
-// (LS dashboard → Products → Share). While a URL is empty its button stays COMING SOON.
-// The buyer's defender name / transfer code rides along as checkout custom data
-// (checkout[custom][player]) — the game's backend webhook uses it to grant the pact.
-var CHECKOUT = { demigod: '', oracle: '', wanderer: '' };
+// Lemon Squeezy checkout links — paste each product's "Buy now" URL here (LS dashboard →
+// Products → Share). While a URL is empty its button stays COMING SOON. The buyer's defender
+// name / transfer code rides along as checkout custom data (checkout[custom][player]) — the
+// game's backend webhook uses it to grant the purchase.
+var CHECKOUT = {
+  demigod: '', oracle: '', wanderer: '',              // Divine Pacts
+  dmg: '', soul: '', ichor: '', relic: '',            // Eternal Favors
+  bundle: '',                                         // all four favors
+  tribute: ''                                         // Supporter's Tribute (repeatable)
+};
 
 document.querySelectorAll('[data-pact]').forEach(function (btn) {
   var url = CHECKOUT[btn.getAttribute('data-pact')];
