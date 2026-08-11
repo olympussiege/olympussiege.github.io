@@ -37,7 +37,7 @@
              placeholder="XXXX-XXXX-XXXX"
              style="width:100%; padding:13px 16px; border:1px solid var(--line); border-radius:13px; background:rgba(8,12,20,.6); color:var(--marble); font-family:'Manrope',system-ui,sans-serif; font-size:15px; letter-spacing:.08em; outline:none;">
       <p id="refMsg" style="color:#c8694e; font-size:12.5px; margin-top:6px; min-height:16px;"></p>
-      <p style="color:var(--faint); font-size:12.5px; margin-top:2px;">Purchases are granted to the defender profile this code belongs to. Find it in the game under <strong style="color:var(--dim);">Options → Transfer Code</strong> — the COPY button copies it exactly.</p>
+      <p style="color:var(--faint); font-size:12.5px; margin-top:2px;">Purchases are granted to the defender profile this code belongs to. Find it in the game under <strong style="color:var(--dim);">Options → Transfer Code</strong> — the COPY button copies it exactly. Enter it first: the shop verifies the code and marks anything you already own.</p>
     </div>
 
     <div class="grid">
@@ -168,6 +168,62 @@ var CHECKOUT = {
   tribute: 'https://olympussiege.lemonsqueezy.com/checkout/buy/be997195-7b7e-4bbc-adb6-e97f03fd0dec'
 };
 
+// Code-gated checkout (2026-08-11): the transfer code must VERIFY against the game's backend
+// before any BUY works — the lookup returns what the profile already owns, owned products
+// flip to OWNED (unclickable, no double-buying a permanent unlock), and an unknown/typo'd
+// code can never reach checkout (no more unmatched orders). Supporter's Tribute is a
+// consumable and never marks OWNED.
+var OWNED_IN = { demigod: 'packs', oracle: 'packs', wanderer: 'packs', dmg: 'perks', soul: 'perks', ichor: 'perks', relic: 'perks' };
+var API = 'https://europe-west1-olympus-siege.cloudfunctions.net';
+var verified = null;   // { code, name, packs, perks } once the transfer code resolves
+var checkT = null, checkSeq = 0;
+
+function msg(text, color) {
+  var el = document.getElementById('refMsg');
+  el.textContent = text || '';
+  el.style.color = color || '#c8694e';
+}
+
+function refreshButtons() {
+  document.querySelectorAll('[data-pact]').forEach(function (btn) {
+    var key = btn.getAttribute('data-pact');
+    if (!CHECKOUT[key]) return;                      // stays COMING SOON
+    var owned = false;
+    if (verified) {
+      if (key === 'bundle') owned = ['dmg', 'soul', 'ichor', 'relic'].every(function (k) { return verified.perks[k]; });
+      else if (OWNED_IN[key]) owned = !!verified[OWNED_IN[key]][key];
+    }
+    btn.textContent = owned ? 'OWNED' : 'BUY';
+    btn.classList.toggle('disabled', owned);
+    if (owned) btn.setAttribute('aria-disabled', 'true'); else btn.removeAttribute('aria-disabled');
+  });
+}
+
+function checkCode() {
+  var raw = (document.getElementById('playerRef').value || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+  verified = null;
+  refreshButtons();
+  if (raw.length !== 12) { msg(''); return; }
+  var dashed = raw.slice(0, 4) + '-' + raw.slice(4, 8) + '-' + raw.slice(8, 12);
+  var seq = ++checkSeq;
+  msg('Consulting the oracle…', 'rgba(243,234,212,.55)');
+  fetch(API + '/shopEntitlements', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code: dashed }) })
+    .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+    .then(function (res) {
+      if (seq !== checkSeq) return;                  // stale response — a newer edit superseded it
+      if (res.ok && res.j) {
+        verified = { code: dashed, name: res.j.name, packs: res.j.packs || {}, perks: res.j.perks || {} };
+        msg('✓ Purchases will be granted to ' + (res.j.name || 'your defender') + '. Anything you already own is marked.', '#8a9a5b');
+      } else if (res.j && (res.j.error === 'unknown code' || res.j.error === 'bad code')) {
+        msg('Code not found — copy it from the game: Options → Transfer Code → COPY.');
+      } else {
+        msg('Could not verify the code right now — try again in a moment.');
+      }
+      refreshButtons();
+    })
+    .catch(function () { if (seq === checkSeq) { msg('Could not verify the code right now — try again in a moment.'); } });
+}
+
 document.querySelectorAll('[data-pact]').forEach(function (btn) {
   var url = CHECKOUT[btn.getAttribute('data-pact')];
   if (!url) return;                       // stays COMING SOON
@@ -175,24 +231,23 @@ document.querySelectorAll('[data-pact]').forEach(function (btn) {
   btn.removeAttribute('aria-disabled');
   btn.textContent = 'BUY';
   btn.addEventListener('click', function () {
-    var input = document.getElementById('playerRef');
-    // Transfer codes are 12 chars of the game's no-lookalike alphabet (no O/I/L/0/1),
-    // shown as XXXX-XXXX-XXXX — normalize pasted spacing/dashes/case before checking.
-    var code = (input.value || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
-    if (code.length !== 12 || /[OIL01]/.test(code)) {
+    if (btn.classList.contains('disabled')) return;   // OWNED
+    if (!verified) {
+      var input = document.getElementById('playerRef');
       input.focus();
       input.style.borderColor = '#c8694e';
-      document.getElementById('refMsg').textContent = 'Enter the 14-character transfer code from the game (Options → Transfer Code → COPY).';
+      msg('Enter your transfer code first — the shop verifies it before checkout (in the game: Options → Transfer Code → COPY).');
       return;
     }
-    var dashed = code.slice(0, 4) + '-' + code.slice(4, 8) + '-' + code.slice(8, 12);
     var sep = url.indexOf('?') === -1 ? '?' : '&';
-    window.location.href = url + sep + 'checkout[custom][player]=' + encodeURIComponent(dashed);
+    window.location.href = url + sep + 'checkout[custom][player]=' + encodeURIComponent(verified.code);
   });
 });
+
 document.getElementById('playerRef').addEventListener('input', function () {
   this.style.borderColor = '';
-  document.getElementById('refMsg').textContent = '';
+  clearTimeout(checkT);
+  checkT = setTimeout(checkCode, 450);
 });
 </script>
 
