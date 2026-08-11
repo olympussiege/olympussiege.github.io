@@ -152,10 +152,19 @@
 // name / transfer code rides along as checkout custom data (checkout[custom][player]) — the
 // game's backend webhook uses it to grant the purchase.
 var CHECKOUT = {
-  demigod: '', oracle: '', wanderer: '',              // Divine Pacts
-  dmg: '', soul: '', ichor: '', relic: '',            // Eternal Favors
-  bundle: '',                                         // all four favors
-  tribute: ''                                         // Supporter's Tribute (repeatable)
+  // Divine Pacts
+  demigod: 'https://olympussiege.lemonsqueezy.com/checkout/buy/ebd40e76-c731-4d72-9e30-aa8224b04a3d',
+  oracle:  'https://olympussiege.lemonsqueezy.com/checkout/buy/9867f8f6-182f-4a4b-aa73-6db9dcb2c935',
+  wanderer:'https://olympussiege.lemonsqueezy.com/checkout/buy/ac8e9885-0192-4060-9d5d-ad9162d9cc00',
+  // Eternal Favors
+  dmg:   'https://olympussiege.lemonsqueezy.com/checkout/buy/b75cb356-44d7-4fcc-9fd5-32c4bc8ee35c',
+  soul:  'https://olympussiege.lemonsqueezy.com/checkout/buy/8462e45f-f236-4822-97a4-ea5b7e46f87a',
+  ichor: 'https://olympussiege.lemonsqueezy.com/checkout/buy/070413b4-50d8-46d3-b96e-bebb2ced1928',
+  relic: 'https://olympussiege.lemonsqueezy.com/checkout/buy/6a1b566a-e5f3-4c8d-a495-7c9daed7aa43',
+  // All four favors
+  bundle: 'https://olympussiege.lemonsqueezy.com/checkout/buy/5524a128-94d1-4d09-b733-939f1324e13b',
+  // Supporter's Tribute (repeatable)
+  tribute: 'https://olympussiege.lemonsqueezy.com/checkout/buy/be997195-7b7e-4bbc-adb6-e97f03fd0dec'
 };
 
 document.querySelectorAll('[data-pact]').forEach(function (btn) {
