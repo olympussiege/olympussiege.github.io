@@ -31,6 +31,14 @@
 
     <div class="notice">THE EMPORIUM OPENS SOON — PACTS ARE NOT YET FOR SALE</div>
 
+    <div style="max-width:520px; margin:0 auto 40px;">
+      <label for="playerRef" style="display:block; font-family:'Cinzel',serif; font-size:12px; letter-spacing:.14em; color:var(--gold); margin-bottom:8px;">YOUR DEFENDER NAME OR TRANSFER CODE</label>
+      <input id="playerRef" type="text" maxlength="20" autocomplete="off" spellcheck="false"
+             placeholder="e.g. Leonidas — or XXXX-XXXX-XXXX"
+             style="width:100%; padding:13px 16px; border:1px solid var(--line); border-radius:13px; background:rgba(8,12,20,.6); color:var(--marble); font-family:'Manrope',system-ui,sans-serif; font-size:15px; outline:none;">
+      <p style="color:var(--faint); font-size:12.5px; margin-top:8px;">Purchases are granted to this defender profile. Both are shown in the game under <strong style="color:var(--dim);">Options</strong> — the transfer code has a COPY button and always works, even before you've chosen a name.</p>
+    </div>
+
     <div class="grid">
       <div class="pact">
         <div class="tier">Divine Pact</div>
@@ -40,7 +48,7 @@
           <li>Doubles the Gift of the Gods cap</li>
         </ul>
         <div class="price">€19.99</div>
-        <a class="btn disabled" aria-disabled="true">COMING SOON</a>
+        <a class="btn disabled" data-pact="demigod" aria-disabled="true">COMING SOON</a>
       </div>
 
       <div class="pact">
@@ -51,7 +59,7 @@
           <li>Held Ground rises to 75% of your best wave</li>
         </ul>
         <div class="price">€19.99</div>
-        <a class="btn disabled" aria-disabled="true">COMING SOON</a>
+        <a class="btn disabled" data-pact="oracle" aria-disabled="true">COMING SOON</a>
       </div>
 
       <div class="pact">
@@ -63,7 +71,7 @@
           <li>Removes all ads</li>
         </ul>
         <div class="price">€14.99</div>
-        <a class="btn disabled" aria-disabled="true">COMING SOON</a>
+        <a class="btn disabled" data-pact="wanderer" aria-disabled="true">COMING SOON</a>
       </div>
     </div>
 
@@ -75,6 +83,33 @@
   </section>
 
 </main>
+
+<script>
+// Lemon Squeezy checkout links — paste the "Buy now" URL for each Divine Pact product here
+// (LS dashboard → Products → Share). While a URL is empty its button stays COMING SOON.
+// The buyer's defender name / transfer code rides along as checkout custom data
+// (checkout[custom][player]) — the game's backend webhook uses it to grant the pact.
+var CHECKOUT = { demigod: '', oracle: '', wanderer: '' };
+
+document.querySelectorAll('[data-pact]').forEach(function (btn) {
+  var url = CHECKOUT[btn.getAttribute('data-pact')];
+  if (!url) return;                       // stays COMING SOON
+  btn.classList.remove('disabled');
+  btn.removeAttribute('aria-disabled');
+  btn.textContent = 'BUY';
+  btn.addEventListener('click', function () {
+    var ref = (document.getElementById('playerRef').value || '').trim();
+    if (!ref) {
+      document.getElementById('playerRef').focus();
+      document.getElementById('playerRef').style.borderColor = '#c8694e';
+      return;
+    }
+    var sep = url.indexOf('?') === -1 ? '?' : '&';
+    window.location.href = url + sep + 'checkout[custom][player]=' + encodeURIComponent(ref);
+  });
+});
+document.getElementById('playerRef').addEventListener('input', function () { this.style.borderColor = ''; });
+</script>
 
 <footer>
   <div class="wrap">
