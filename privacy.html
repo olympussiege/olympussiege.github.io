@@ -32,29 +32,36 @@
     developer. This policy explains what data the game handles, why, and what your
     choices are. The short version: <strong>the game collects no email address, no real
     name, no contacts, no location, and runs no analytics or tracking</strong>. The only
-    data that ever leaves your device is what powers the global leaderboard.</p>
+    data that ever leaves your device is what powers the global leaderboard and your own
+    profile's backup for moving between devices.</p>
 
     <h2>1. DATA STORED ON YOUR DEVICE</h2>
     <p>All of your game progress — currencies, upgrades, relics, achievements, settings,
-    and the current defense — is stored locally on your device. It is not transmitted to
-    us or anyone else, except for the specific leaderboard data described below.</p>
+    and the current defense — is stored locally on your device and remains fully playable
+    offline. A copy of your gameplay progress is backed up to our servers (section 2) so
+    the leaderboard works and so you can move your profile to a new device with your
+    transfer code.</p>
 
     <h2>2. DATA STORED ON OUR SERVERS</h2>
     <p>To operate the global leaderboard and let you move your profile between devices,
-    our servers store a minimal profile:</p>
+    our servers store your game profile:</p>
     <table>
       <tr><th>Data</th><th>Purpose</th></tr>
       <tr><td><strong>Defender name</strong> — a display name you choose yourself</td>
           <td>Shown on the global leaderboard next to your score</td></tr>
       <tr><td><strong>Gameplay statistics</strong> — your best wave reached</td>
           <td>Your leaderboard ranking</td></tr>
+      <tr><td><strong>Gameplay progress backup</strong> — your saved progression
+          (currencies, upgrades, relics, achievements, purchases, the current defense)</td>
+          <td>Moving your whole profile to a new device via the transfer code</td></tr>
       <tr><td><strong>Hashed identifiers</strong> — a random, game-generated profile ID stored in hashed form</td>
           <td>Ties your score to your profile; enables device transfer</td></tr>
     </table>
     <p>That is the complete list. The defender name is free-form text of your choosing
-    and does not need to be (and shouldn't be) your real name. No email address, account
-    registration, password, device fingerprint, advertising ID, or location data is
-    collected.</p>
+    and does not need to be (and shouldn't be) your real name. The game itself collects
+    no email address, account registration, password, device fingerprint, advertising ID,
+    or location data. (A purchase in the web shop shares your checkout email with us —
+    see section 5.)</p>
     <p>This data is stored with Google Firebase (Google Cloud) in the
     <strong>europe-west1</strong> region (Belgium, European Union). Google acts as our
     hosting processor; the data is not shared with, sold to, or used by anyone else.</p>
@@ -73,9 +80,14 @@
     <h2>5. PURCHASES</h2>
     <p>If you buy something through an app store (Google Play or the App Store), the
     payment is processed entirely by that store under its own privacy policy — we never
-    see your payment details. If a web shop opens on this site, its payments will be
-    processed by a dedicated merchant of record under its own policy, and we will only
-    receive what is needed to grant the purchase to your game profile.</p>
+    see your payment details. Purchases in the web shop on this site are processed by a
+    dedicated merchant of record under its own policy; we never see your payment details
+    there either. For each web-shop order the merchant shares the order details with us,
+    <strong>including the email address used at checkout</strong>, which we keep in our
+    order records solely to match the purchase to a game profile, process refunds, and
+    answer purchase support. It is never used for marketing and never shared with anyone
+    else. Order records can be deleted on request per section 6, except where a record
+    of the sale must be retained for accounting.</p>
 
     <h2>6. DATA RETENTION &amp; DELETION</h2>
     <p>Your server-side profile is kept for as long as it remains on the leaderboard
