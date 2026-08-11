@@ -32,11 +32,12 @@
     <div class="notice">THE EMPORIUM OPENS SOON — PACTS ARE NOT YET FOR SALE</div>
 
     <div style="max-width:520px; margin:0 auto 40px;">
-      <label for="playerRef" style="display:block; font-family:'Cinzel',serif; font-size:12px; letter-spacing:.14em; color:var(--gold); margin-bottom:8px;">YOUR DEFENDER NAME OR TRANSFER CODE</label>
-      <input id="playerRef" type="text" maxlength="20" autocomplete="off" spellcheck="false"
-             placeholder="e.g. Leonidas — or XXXX-XXXX-XXXX"
-             style="width:100%; padding:13px 16px; border:1px solid var(--line); border-radius:13px; background:rgba(8,12,20,.6); color:var(--marble); font-family:'Manrope',system-ui,sans-serif; font-size:15px; outline:none;">
-      <p style="color:var(--faint); font-size:12.5px; margin-top:8px;">Purchases are granted to this defender profile. Both are shown in the game under <strong style="color:var(--dim);">Options</strong> — the transfer code has a COPY button and always works, even before you've chosen a name.</p>
+      <label for="playerRef" style="display:block; font-family:'Cinzel',serif; font-size:12px; letter-spacing:.14em; color:var(--gold); margin-bottom:8px;">YOUR TRANSFER CODE</label>
+      <input id="playerRef" type="text" maxlength="14" autocomplete="off" spellcheck="false"
+             placeholder="XXXX-XXXX-XXXX"
+             style="width:100%; padding:13px 16px; border:1px solid var(--line); border-radius:13px; background:rgba(8,12,20,.6); color:var(--marble); font-family:'Manrope',system-ui,sans-serif; font-size:15px; letter-spacing:.08em; outline:none;">
+      <p id="refMsg" style="color:#c8694e; font-size:12.5px; margin-top:6px; min-height:16px;"></p>
+      <p style="color:var(--faint); font-size:12.5px; margin-top:2px;">Purchases are granted to the defender profile this code belongs to. Find it in the game under <strong style="color:var(--dim);">Options → Transfer Code</strong> — the COPY button copies it exactly.</p>
     </div>
 
     <div class="grid">
@@ -174,17 +175,25 @@ document.querySelectorAll('[data-pact]').forEach(function (btn) {
   btn.removeAttribute('aria-disabled');
   btn.textContent = 'BUY';
   btn.addEventListener('click', function () {
-    var ref = (document.getElementById('playerRef').value || '').trim();
-    if (!ref) {
-      document.getElementById('playerRef').focus();
-      document.getElementById('playerRef').style.borderColor = '#c8694e';
+    var input = document.getElementById('playerRef');
+    // Transfer codes are 12 chars of the game's no-lookalike alphabet (no O/I/L/0/1),
+    // shown as XXXX-XXXX-XXXX — normalize pasted spacing/dashes/case before checking.
+    var code = (input.value || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+    if (code.length !== 12 || /[OIL01]/.test(code)) {
+      input.focus();
+      input.style.borderColor = '#c8694e';
+      document.getElementById('refMsg').textContent = 'Enter the 14-character transfer code from the game (Options → Transfer Code → COPY).';
       return;
     }
+    var dashed = code.slice(0, 4) + '-' + code.slice(4, 8) + '-' + code.slice(8, 12);
     var sep = url.indexOf('?') === -1 ? '?' : '&';
-    window.location.href = url + sep + 'checkout[custom][player]=' + encodeURIComponent(ref);
+    window.location.href = url + sep + 'checkout[custom][player]=' + encodeURIComponent(dashed);
   });
 });
-document.getElementById('playerRef').addEventListener('input', function () { this.style.borderColor = ''; });
+document.getElementById('playerRef').addEventListener('input', function () {
+  this.style.borderColor = '';
+  document.getElementById('refMsg').textContent = '';
+});
 </script>
 
 <footer>
