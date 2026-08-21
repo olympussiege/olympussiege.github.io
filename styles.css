@@ -406,3 +406,51 @@ footer a {
 footer a:hover { color: var(--gold); }
 
 footer .fine { color: var(--faint); font-size: 12.5px; }
+
+/* ---------- responsive (2026-08-21 — the sheet had NO media queries; the 5-item nav
+   needed 536px and forced a horizontal scroll on phones, which iOS renders as the whole
+   page zoomed/shifted. Tablet (≥768px) already laid out fine and is left untouched.) */
+@media (max-width: 700px) {
+
+  /* Header: two stacked rows — brand centered on its own line, links wrapped under it.
+     The sticky header grows a little; everything stays tappable (≥40px hit areas). */
+  .nav {
+    flex-wrap: wrap;
+    height: auto;
+    padding: 10px 0 8px;
+    gap: 2px 4px;
+    justify-content: center;
+  }
+  .nav .brand { width: 100%; justify-content: center; margin-right: 0; margin-bottom: 4px; }
+  .nav .brand img { width: 30px; height: 30px; }
+  .nav .brand span { font-size: 14px; }
+  .nav a.link { font-size: 11px; letter-spacing: .12em; padding: 8px 9px; }
+
+  /* Breathing room scaled to the small screen */
+  .wrap { padding: 0 18px; }
+  .hero { padding: 52px 0 44px; }
+  .hero img.mark { width: 96px; height: 96px; border-radius: 22px; margin-bottom: 26px; }
+  .hero p.lede { font-size: 15.5px; }
+  section { padding: 40px 0; }
+  h2.heading { font-size: 20px; }
+  .heading-sub { margin-bottom: 28px; }
+  .card { padding: 22px 18px; }
+  .pact { padding: 24px 20px; }
+  .notice { padding: 12px 16px; font-size: 11px; }
+
+  /* Prose pages (privacy/terms): tighter headings; wide tables scroll WITHIN themselves
+     instead of dragging the whole page sideways. */
+  .prose { padding: 40px 0 16px; }
+  .prose h1 { font-size: 24px; }
+  .prose table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Very narrow phones (SE/mini class): keep the nav links on one wrapped line comfortably. */
+@media (max-width: 360px) {
+  .nav a.link { font-size: 10px; letter-spacing: .1em; padding: 8px 6px; }
+  h1.title { font-size: 42px; }
+}
