@@ -422,11 +422,13 @@ footer .fine { color: var(--faint); font-size: 12.5px; }
   .nav {
     flex-wrap: wrap;
     height: auto;
-    padding: 10px 0 8px;
+    /* Generous top clearance (user feedback 2026-08-21: the brand icon sat flush against the
+       header's top edge on device) + notch/status-bar safe-area for standalone contexts. */
+    padding: calc(18px + env(safe-area-inset-top, 0px)) 0 10px;
     gap: 2px 4px;
     justify-content: center;
   }
-  .nav .brand { width: 100%; justify-content: center; margin-right: 0; margin-bottom: 4px; }
+  .nav .brand { width: 100%; justify-content: center; margin-right: 0; margin-bottom: 6px; }
   .nav .brand img { width: 30px; height: 30px; }
   .nav .brand span { font-size: 14px; }
   .nav a.link { font-size: 11px; letter-spacing: .12em; padding: 8px 9px; }
