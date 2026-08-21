@@ -73,6 +73,11 @@ header {
   height: 34px;
   border-radius: 8px;
   box-shadow: 0 0 0 1px rgba(232, 196, 106, .3);
+  /* The icon art is near-full-bleed (the dashed ring sits ~1px from the asset's top edge),
+     so at nav size the ring's top arc read as cut off (user-reported on iPhone). Inset the
+     art on a background matching the icon's own navy (= --ink, so it blends seamlessly). */
+  padding: 3px;
+  background: var(--ink);
 }
 
 .nav .brand span {
