@@ -34,9 +34,9 @@
 
     <div style="max-width:520px; margin:0 auto 40px;">
       <label for="playerRef" style="display:block; font-family:'Cinzel',serif; font-size:12px; letter-spacing:.14em; color:var(--gold); margin-bottom:8px;">YOUR TRANSFER CODE</label>
-      <input id="playerRef" type="text" maxlength="14" autocomplete="off" spellcheck="false"
+      <input id="playerRef" type="text" maxlength="14" autocomplete="off" spellcheck="false" autocapitalize="characters"
              placeholder="XXXX-XXXX-XXXX"
-             style="width:100%; padding:13px 16px; border:1px solid var(--line); border-radius:13px; background:rgba(8,12,20,.6); color:var(--marble); font-family:'Manrope',system-ui,sans-serif; font-size:15px; letter-spacing:.08em; outline:none;">
+             style="width:100%; padding:13px 16px; border:1px solid var(--line); border-radius:13px; background:rgba(8,12,20,.6); color:var(--marble); font-family:'Manrope',system-ui,sans-serif; font-size:15px; letter-spacing:.08em; outline:none; text-transform:uppercase;">
       <p id="refMsg" style="color:#c8694e; font-size:12.5px; margin-top:6px; min-height:16px;"></p>
       <p style="color:var(--faint); font-size:12.5px; margin-top:2px;">Purchases are granted to the defender profile this code belongs to. Find it in the game under <strong style="color:var(--dim);">Options → Transfer Code</strong> — the COPY button copies it exactly. Enter it first: the shop verifies the code and marks anything you already own.</p>
     </div>
@@ -245,7 +245,34 @@ document.querySelectorAll('[data-pact]').forEach(function (btn) {
   });
 });
 
-document.getElementById('playerRef').addEventListener('input', function () {
+// AUTO-DASH + UPPERCASE (2026-08-21, user decision — mirrors the app's Link-a-Device field,
+// Home.dc.html linkFmt): the field groups as you type — the '-' appears by itself after the
+// 4th and 8th character (XXXX-XXXX-XXXX). Uppercases and strips everything non-alphanumeric,
+// so pasting a spaced/dashed/lowercase code normalizes too. The caret is re-derived from how
+// many code characters sat left of it, so mid-string edits don't jump to the end; on deletions
+// the trailing dash is NOT re-appended (else backspace could never cross it) and the caret
+// stays before a dash instead of hopping past.
+function fmtCode(el, inputType) {
+  var raw = el.value;
+  var caret = raw.length;
+  try { if (el.selectionStart != null) caret = el.selectionStart; } catch (err) {}
+  var beforeN = raw.slice(0, caret).replace(/[^0-9a-zA-Z]/g, '').length;
+  var clean = raw.replace(/[^0-9a-zA-Z]/g, '').toUpperCase().slice(0, 12);
+  var deleting = !!(inputType && inputType.indexOf('delete') === 0);
+  var out = clean.slice(0, 4);
+  if (clean.length > 4 || (clean.length === 4 && !deleting)) out += '-';
+  out += clean.slice(4, 8);
+  if (clean.length > 8 || (clean.length === 8 && !deleting)) out += '-';
+  out += clean.slice(8, 12);
+  var pos = 0, seen = 0;
+  while (pos < out.length && seen < beforeN) { if (out[pos] !== '-') seen++; pos++; }
+  if (!deleting && out[pos] === '-') pos++;
+  el.value = out;
+  try { el.setSelectionRange(pos, pos); } catch (err) {}
+}
+
+document.getElementById('playerRef').addEventListener('input', function (e) {
+  fmtCode(this, e && e.inputType);
   this.style.borderColor = '';
   clearTimeout(checkT);
   checkT = setTimeout(checkCode, 450);
